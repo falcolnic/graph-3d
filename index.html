@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>3D Graph</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+    </style>
+</head>
+<body>
+    <div id="fps-container">
+        FPS: <span id="fps">0</span>
+    </div>
+
+    <div id="info">3D Knowledge Graph - Click and drag to rotate, scroll to zoom</div>
+    <script type="module" src="src/main.js"></script>
+
+    <script>
+        const fpsElem = document.querySelector("#fps");
+        let then = 0;
+        function updateFPS(now){
+            now *= 0.001;
+            const deltaTime = now - then;
+            then = now;
+            const fps = 1/deltaTime
+            fpsElem.textContent = fps.toFixed(2);
+            requestAnimationFrame(updateFPS);
+        }
+        requestAnimationFrame(updateFPS);
+    </script>
+</body>
+</html>
