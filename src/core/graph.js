@@ -69,6 +69,28 @@ export class Graph3D {
         return { sphere, label: textSprite };
     }
 
+    updateNodeColors() {     
+        const connectionCounts = new Map();
+        this.nodes.forEach((node, id) => {
+            connectionCounts.set(id, 0);
+        });        
+        this.edges.forEach(edge => {
+            connectionCounts.set(edge.nodeId1, (connectionCounts.get(edge.nodeId1) || 0) + 1);
+            connectionCounts.set(edge.nodeId2, (connectionCounts.get(edge.nodeId2) || 0) + 1);
+        });
+
+        const maxConnections = Math.max(...connectionCounts.values());
+        this.nodes.forEach((node, id) => {
+            const connections = connectionCounts.get(id) || 0;
+            const normalizedConnections = maxConnections > 0 ? connections / maxConnections : 0;
+            const lightColor = new THREE.Color(0xfad2cf);
+            const redColor = new THREE.Color(0xff0000);
+            const finalColor = lightColor.lerp(redColor, normalizedConnections * 0.9);
+
+            node.sphere.material.color = finalColor;
+        });
+    }
+
     addEdge(nodeId1, nodeId2) {
         const node1 = this.nodes.get(nodeId1);
         const node2 = this.nodes.get(nodeId2);

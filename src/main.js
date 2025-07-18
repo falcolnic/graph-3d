@@ -28,12 +28,12 @@ const gui = createGUI(controls, graph.physics);
 sampleNodes.forEach(nodeData => {
     graph.addNode(nodeData.id, nodeData.label, null, nodeData.url);
 });
-
 sampleNodes.forEach(nodeData => {
     nodeData.connections.forEach(connectionId => {
         graph.addEdge(nodeData.id, connectionId);
     });
 });
+graph.updateNodeColors();
 
 function animate() {
     requestAnimationFrame(animate);
