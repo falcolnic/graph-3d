@@ -1,13 +1,14 @@
 import * as THREE from 'three';
 
 export class InteractionHandler {
-    constructor(graph, camera, renderer) {
+    constructor(graph, camera, renderer, editor = null) {
         this.graph = graph;
         this.camera = camera;
         this.renderer = renderer;
         this.raycaster = new THREE.Raycaster();
         this.mouse = new THREE.Vector2();
         this.hoveredNode = null;
+        this.editor = editor;
 
         this.isDragging = false;
         this.mouseDownTime = 0;
@@ -18,6 +19,21 @@ export class InteractionHandler {
     }
 
     setupEventListeners() {
+        const disconnectBtn = document.getElementById('disconnect-selected');
+        const deleteBtn = document.getElementById('delete-selected');
+
+        if (disconnectBtn) {
+            disconnectBtn.addEventListener('click', () => {
+                this.disconnectSelectedNodes();
+            });
+        }
+
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', () => {
+                this.deleteSelectedNodes();
+            });
+        }
+
         this.renderer.domElement.addEventListener('mousedown', (event) => {
             this.isDragging = false;
             this.mouseDownTime = Date.now();
@@ -89,8 +105,28 @@ export class InteractionHandler {
         if (this.hoveredNode) {
             const nodeId = this.hoveredNode.sphere.userData.id;
             const url = this.hoveredNode.sphere.userData.url;
-            if (url) {window.open(url, '_blank');} 
-            else { console.log(`Clicked on node: ${nodeId}`); }
+
+            if (!this.editor && url) {
+                window.open(url, '_blank');
+            } else if (this.editor) {
+                if (this.editor.selectedNodes.has(nodeId)) {
+                    this.editor.deselectNode(nodeId);
+                } else {  
+                    this.editor.selectNode(nodeId)
+                }
+            }
+        }
+    }
+
+    disconnectSelectedNodes() {
+        if (this.editor) {
+            this.editor.disconnectSelectedNodes();
+        }
+    }
+
+    deleteSelectedNodes() {
+        if (this.editor) {
+            this.editor.deleteSelectedNodes();
         }
     }
 }

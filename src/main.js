@@ -3,6 +3,7 @@ import { Graph3D } from './core/graph.js';
 import { sampleNodes } from './docs.js';
 import { camera, initializeControls } from './core/navigate.js';
 import { createGUI } from './GUI.js';
+import { GraphEditor } from './core/GraphEditor.js'
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x141414);
@@ -22,7 +23,10 @@ scene.add(directionalLight);
 
 
 const graph = new Graph3D(scene, camera, renderer);
+const editor = new GraphEditor(graph);
 const gui = createGUI(controls, graph.physics);
+
+graph.interactionHandler.editor = editor;
 
 
 sampleNodes.forEach(nodeData => {

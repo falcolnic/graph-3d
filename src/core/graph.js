@@ -69,7 +69,7 @@ export class Graph3D {
         return { sphere, label: textSprite };
     }
 
-    updateNodeColors() {     
+    updateNodeColors() {
         const connectionCounts = new Map();
         this.nodes.forEach((node, id) => {
             connectionCounts.set(id, 0);
@@ -114,6 +114,45 @@ export class Graph3D {
         }
         return null;
     }
+
+    removeEdge(nodeId1, nodeId2) {
+        const edgeIndex = this.edges.findIndex(edge => 
+            (edge.nodeId1 === nodeId1 && edge.nodeId2 === nodeId2) ||
+            (edge.nodeId1 === nodeId2 && edge.nodeId2 === nodeId1)
+        );
+
+        if (edgeIndex !== -1) {
+            const edge = this.edges[edgeIndex];
+            this.edgeGroup.remove(edge.line);
+            this.edges.splice(edgeIndex, 1);
+            this.updateNodeColors();
+        }
+    }
+
+    removeNode(id) {
+        const node = this.nodes.get(id);
+        if (node) {
+            this.nodeGroup.remove(node.sphere);
+            this.labelGroup.remove(node.label);
+            this.nodes.delete(id);
+
+            this.edges = this.edges.filter(edge => {
+                if (edge.nodeId1 === id || edge.nodeId2 === id) {
+                    this.edgeGroup.remove(edge.line);
+                    return false;
+                }
+                return true;
+            });
+            this.updateNodeColors();
+        }
+    }
+
+    Edge(nodeId1, nodeId2) {
+        return this.edges.some(edge => 
+            (edge.nodeId1 === nodeId1 && edge.nodeId2 === nodeId2) ||
+            (edge.nodeId1 === nodeId2 && edge.nodeId2 === nodeId1)
+        );
+    }              
 
     updateEdges() {
         this.edges.forEach(edge => {
