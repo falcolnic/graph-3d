@@ -31,6 +31,10 @@ export class Graph3D {
         this.scene.add(this.labelGroup);
     }
 
+    hasEdge(nodeId1, nodeId2) {
+        return this.Edge(nodeId1, nodeId2);
+    }
+
     addNode(id, label, position = null, url = null) {
         if (!position) {
             position = {
